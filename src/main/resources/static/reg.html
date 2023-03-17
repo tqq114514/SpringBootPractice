@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!--用户注册页面
+ form 表单
+        表单组件用于将用户在页面上输入的内容提交给服务端使用
+        所有输入组件只有包含在form标签的范围内才会被表单提交,这一点要十分注意!!!
+
+        表单有两个重要的属性:
+        action:用来指定表单提交的路径
+        method:用来指定表单提交的方式
+               提交方式有两种:
+               GET:将所有输入组件中用户输入的信息拼接到URL的资源抽象路径部分直接提交
+               POST:将所有信息放在请求的消息正文中打包传递
+                    当表单中含有用户隐私信息或包含附件时应当使用POST形式提交
+               若form中不指定method,默认的提交方式为GET
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+
+</head>
+<body>
+<center>
+    <h2>用户注册</h2>
+    <form action="/regUser" method="get">
+    <table border="1px">
+        <tr>
+            <td>用户名</td>
+            <td><input name="username" type="text"></td>
+        </tr>
+        <tr>
+            <td>密码</td>
+            <td><input name="password" type="password"></td>
+        </tr>
+        <tr>
+            <td>昵称</td>
+            <td><input name="nickname" type="text"></td>
+        </tr>
+        <tr>
+            <td>年龄</td>
+            <td><input name="age" type="number"></td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center"><input type="submit" value="注册" onclick="alert('你完蛋了！')"></td>
+        </tr>
+    </table>
+    </form>
+</center>
+</body>
+</html>
