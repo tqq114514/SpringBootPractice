@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /*当前类处理与用户相关的业务操作*/
 @Controller
@@ -50,7 +51,7 @@ public class UserController {
         User user = new User(username, password, nickname, age);
         File file = new File(userDir, username + ".obj");
 
-        /*用户已存在(文件已存在)，就重新注册*/
+        /*用户已存在(文件名已存在)，就重新注册*/
         if (file.exists()) {
             try {
                 response.sendRedirect("./have_user.html");
@@ -107,6 +108,77 @@ public class UserController {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+
+
+    }
+
+    @RequestMapping("/userList")
+    public void userList(HttpServletRequest request,HttpServletResponse response){
+        System.out.println("开始处理显示用户列表");
+        /*获取users目录里的所有文件，存入一个集合备用*/
+        List<User> userList = new ArrayList<>();
+        /*获取users目录下的所有obj文件,保存到file[]数组中*/
+        File[] subs = userDir.listFiles(users->users.getName().endsWith(".obj"));
+        /*File[] subs = userDir.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File Users) {  //传入文件名
+                return Users.getName().endsWith(".obj");
+            }
+        });
+*/
+        /*从file[]里挨个读取文件名，边读边保存到集合中*/
+        for (File sub:subs){
+            try(FileInputStream fis = new FileInputStream(sub);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                ) {
+                User user = (User) ois.readObject();
+                userList.add(user);
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
+        response.setContentType("text/html;charset=utf-8");
+        try {
+            PrintWriter pw = response.getWriter();
+            pw.println("<!DOCTYPE html>");
+            pw.println("<html lang=\"zh-cn\">");
+            pw.println("<head>");
+            pw.println("<meta charset=\"UTF-8\">");
+            pw.println("<title>用户列表</title>");
+            pw.println("</head>");
+            pw.println("<body>");
+            pw.println("<center>");
+            pw.println("<h2>用户列表</h2>");
+            pw.println("<table border=\"1px\">");
+            pw.println("<tr>");
+            pw.println("<td>用户名:</td>");
+            pw.println("<td>密码:</td>");
+            pw.println("<td>昵称:</td>");
+            pw.println("<td>年龄:</td>");
+            pw.println("<tr>");
+
+
+            /*遍历集合，通过引用对象打点访问get方法获取私有属性*/
+            for (User user:userList){
+                pw.println("<tr>");
+                pw.println("<td>"+user.getUsername()+"</td>");
+                pw.println("<td>"+user.getPassword()+"</td>");
+                pw.println("<td>"+user.getNickname()+"</td>");
+                pw.println("<td>"+user.getAge()+"</td>");
+                pw.println("<tr>");
+            }
+
+            pw.println("</table>");
+            pw.println("</center>");
+            pw.println("</body>");
+            pw.println("</html>");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
 
